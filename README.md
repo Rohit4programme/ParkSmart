@@ -23,7 +23,7 @@ A modern parking discovery, booking, and gate-verification platform: real parkin
 - **React 19** + **TypeScript** + **Vite**
 - **React Router v7** — driver (`/`), auth, bookings, owner, and verify routes
 - **Tailwind CSS v4** — styling with `@custom-variant dark` for class-based dark mode
-- **Google Maps JavaScript API** — map rendering via `@vis.gl/react-google-maps` (advanced markers, InfoWindows, Circles)
+- **Google Maps JavaScript API** — map rendering via `@vis.gl/react-google-maps` (advanced markers, InfoWindows, Circles), with an optional MapTiler raster street layer (`VITE_MAPTILER_API_KEY`)
 - **Google Places API (New)** — parking discovery via direct REST `fetch` (`searchNearby`, `searchText`, place details + photos)
 - **Google Routes API** — route calculation through the Maps JS Routes library (`importLibrary('routes')`)
 - **Express** — API server (helmet, CORS allowlist, express-rate-limit) serving the Vite app in dev and `dist/` in production

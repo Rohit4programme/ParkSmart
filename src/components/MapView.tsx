@@ -63,7 +63,10 @@ interface Props {
 
 const API_KEY = getApiKey();
 
-const MAPTILER_KEY = 'bJEJnXmRlZVhEh2wTH6P';
+const MAPTILER_KEY =
+  (import.meta as any).env?.VITE_MAPTILER_API_KEY ||
+  (import.meta as any).env?.VITE_MAPTILER_API_KEY_PUBLIC ||
+  '';
 
 // Renders MapTiler street tiles as the actual base map type. Custom base map
 // types only render on raster maps, so the map must not use a vector mapId
@@ -72,7 +75,7 @@ const MapTilerBaseLayer: React.FC = () => {
   const map = useMap();
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !MAPTILER_KEY) return;
 
     const mapTilerType = new google.maps.ImageMapType({
       getTileUrl: (coord: google.maps.Point, zoom: number) =>
