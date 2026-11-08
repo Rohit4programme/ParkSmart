@@ -1,0 +1,6 @@
+{
+  "name": "Smart Parking Spot Finder",
+  "description": "Smart parking spot finder and real-time booking platform with AI spot recommendation, garage floor level maps, QR digital pass, live navigation, and parking management.",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

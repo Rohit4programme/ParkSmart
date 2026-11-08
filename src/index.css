@@ -1,0 +1,243 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ── Page background ────────────────────────────────────────────────────────
+   Implemented by `components/VideoBackground.tsx`, which mounts a single
+   fixed layer of the supplied clip. Layering, bottom to top:
+
+       .app-background__video   (z-index: 0, pointer-events: none)
+       .app-background__scrim   (readability veil)
+       application UI           (wrapped in `relative z-10` by main.tsx)
+
+   The layer is `position: fixed`, so it can never add a scrollbar, cause a
+   layout shift, or interfere with Lenis/ScrollStack scrolling.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* The <html> canvas carries the clip's own near-black tone so there is no
+   white flash before the stylesheet or the layer mounts. */
+html {
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #0b1220;
+}
+
+/* The body paints nothing itself — the video layer owns the background, so
+   no colour, gradient or image can peek out behind the clip. */
+body {
+  background: transparent;
+}
+
+.app-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Static fallback. The poster is a real frame from the supplied clip and
+     is what shows while the clip buffers, when autoplay is blocked, when the
+     file is missing or undecodable, and under `prefers-reduced-motion`. */
+  background-color: #0b1220;
+  background-image: url('/parking-background-poster.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Isolate this layer's layout and paint from the rest of the document. */
+  contain: layout paint;
+}
+
+.app-background__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Preserve the clip's 16:9 aspect ratio: fill the area, crop the overflow,
+     never letterbox and never stretch. */
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  /* Keep the loop on its own compositor layer so decoding never repaints
+     the page. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Subtle readability veil, tuned per theme so the clip stays clearly visible:
+   light mode paints its dark text over a light wash, dark mode the reverse. */
+.app-background__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(248, 250, 252, 0.42);
+}
+
+.dark .app-background__scrim {
+  background: rgba(2, 6, 23, 0.38);
+}
+
+@layer base {
+  :root {
+    --color-accent: #2563eb;
+    --color-accent-hover: #1d4ed8;
+    --color-accent-light: #eff6ff;
+    --color-accent-dark: #1e3a8a;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100%;
+  }
+}
+
+.theme-emerald {
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+  --color-accent-light: #ecfdf5;
+  --color-accent-dark: #064e3b;
+}
+
+.theme-violet {
+  --color-accent: #7c3aed;
+  --color-accent-hover: #6d28d9;
+  --color-accent-light: #f5f3ff;
+  --color-accent-dark: #4c1d95;
+}
+
+.theme-amber {
+  --color-accent: #d97706;
+  --color-accent-hover: #b45309;
+  --color-accent-light: #fffbeb;
+  --color-accent-dark: #78350f;
+}
+
+.theme-rose {
+  --color-accent: #e11d48;
+  --color-accent-hover: #be123c;
+  --color-accent-light: #fff1f2;
+  --color-accent-dark: #881337;
+}
+
+.theme-slate {
+  --color-accent: #475569;
+  --color-accent-hover: #334155;
+  --color-accent-light: #f8fafc;
+  --color-accent-dark: #0f172a;
+}
+
+.high-contrast * {
+  border-color: #334155 !important;
+}
+.dark.high-contrast * {
+  border-color: #64748b !important;
+}
+
+.density-compact .py-4 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Dark mode only changes the text colour here — the page background belongs
+   to the video layer and must stay unpainted. */
+.dark body {
+  color: #f8fafc;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1e293b;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.magic-card {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.magic-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(37, 99, 235, calc(var(--glow-intensity) * 0.7)) 0%,
+    rgba(37, 99, 235, calc(var(--glow-intensity) * 0.35)) 30%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.magic-card:hover::after {
+  opacity: 1;
+}
+
+.magic-card:hover {
+  box-shadow:
+    0 4px 20px rgba(37, 99, 235, 0.15),
+    0 0 30px rgba(37, 99, 235, 0.1);
+}
+
+.magic-particle::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: rgba(37, 99, 235, 0.2);
+  border-radius: 50%;
+  z-index: -1;
+}

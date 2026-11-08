@@ -1,0 +1,77 @@
+/* ─── Parking Details InfoWindow — Glassmorphism ───────────────────────────────
+   Scoped to .glass-iw-host (this app's single map container) so no other
+   Google Maps popup is affected. Overrides the opaque wrappers Google Maps
+   injects around the info window content. */
+
+/* ─── Map container sizing ─────────────────────────────────────────────────────
+   @vis.gl/react-google-maps drops its inline {width:100%, height:100%,
+   position:relative, zIndex:0} block whenever a className is passed to <Map>.
+   ".glass-iw-host" IS that map container's className (kept for the InfoWindow
+   scoping below), so the sizing defaults are restored here — otherwise the map
+   div collapses to height 0 and renders invisible. */
+.glass-iw-host {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 0;
+}
+
+/* Surface: the outer wrapper becomes the glass card */
+.glass-iw-host .gm-style .gm-style-iw-c {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  padding: 0;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.dark .glass-iw-host .gm-style .gm-style-iw-c {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* Inner content wrapper: remove Google's opaque white background */
+.glass-iw-host .gm-style .gm-style-iw {
+  background-color: transparent;
+  box-shadow: none;
+  border-radius: 20px;
+}
+
+/* Header row (close button area) and scroll area: transparent */
+.glass-iw-host .gm-style .gm-style-iw-chr,
+.glass-iw-host .gm-style .gm-style-iw-d {
+  background-color: transparent;
+}
+
+/* Pointer tail: hide Google's white square */
+.glass-iw-host .gm-style .gm-style-iw-tc,
+.glass-iw-host .gm-style .gm-style-iw-tc::after {
+  display: none;
+}
+
+/* Google's "frosted edge" element behind the window: remove */
+.glass-iw-host .gm-style .gm-style-iw-c + .gm-style-iw {
+  display: none;
+}
+
+/* Close button: subtle glass circle */
+.glass-iw-host .gm-style .gm-style-iw-chr .gm-ui-hover-effect {
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+}
+
+.dark .glass-iw-host .gm-style .gm-style-iw-chr .gm-ui-hover-effect {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile: keep the popup inside the viewport */
+@media (max-width: 640px) {
+  .glass-iw-host .gm-style .gm-style-iw {
+    max-width: calc(100vw - 24px);
+  }
+}

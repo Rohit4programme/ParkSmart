@@ -1,0 +1,16 @@
+node_modules/
+build/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+*.local
+.DS_Store
+Thumbs.db
+*.log
+*.env
+.env*
+!.env.example
+
+# Local file-backed data stores (JSON) used when no database is reachable
+data/
